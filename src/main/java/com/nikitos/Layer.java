@@ -9,7 +9,7 @@ import static java.lang.Math.*;
 public class Layer {
     public static final int TYPE_X = 0, TYPE_Y = 1;
     private double[][] data; //points
-    private double time_index;//may be int and half int
+    private final double time_index;//may be int and half int
 
     public Layer(double time_index) {
         this.time_index = time_index;
@@ -39,21 +39,21 @@ public class Layer {
     }
 
     private void progonka_1d(int type, int pos, ModelConfig config, Layer layer) {
+        //search solution like y_{n-1} = an * yn + bn
+        //here on index n we keep n+1 index
+        double[] a = new double[config.sizex - 1], b = new double[config.sizex - 1];
+        //for each index get coefficients
+        double A, B, C, F;
+
         if (type == TYPE_X) {
-            //search solution like y_{n-1} = an * yn + bn
-            //here on index n we keep n+1 index
-            double[] a = new double[config.sizex - 1], b = new double[config.sizex - 1];
             //**************
             //border conditions is u(x=0)=u(x=pi)=0
-            a[0]=0;
-            a[a.length-1]=0;
-            b[0]=0;
-            b[b.length-1]=0;
+            a[0] = 0;
+            a[a.length - 1] = 0;
+            b[0] = 0;
+            b[b.length - 1] = 0;
             //*************
-            //for each index get coefficients
-            double A, B, C, F;
-            //todo: border conditions
-            A = B = 0.5 / pow(config.sizex, 2) * config.tau;
+            A = B = 0.5 / pow(config.hx, 2) * config.tau;
             C = 1 + config.tau / pow(config.hx, 2);
             //so pos is fixed y-index
             //straight pass
@@ -74,7 +74,29 @@ public class Layer {
             }
         } else {
             //so pos is fixed x-index
-
+            //**************
+            //border conditions is u(x=0)=u(x=pi)=0
+            //todo here
+            //*************
+            A = B = 0.5 / pow(config.hy, 2) * config.tau;
+            C = 1 + config.tau / pow(config.hy, 2);
+            //so pos is fixed y-index
+            //straight pass
+            for (int y = 1; y < config.sizey - 1; y++) { //do not affect the borders (that is why form 1 to length -1)
+                F = 0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y] +
+                        (1 + config.tau / pow(config.hx, 2)) * data[pos][y] +
+                        0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y]
+                        + 0.5 * config.tau * f(pos * config.hx + config.initX, y * config.hy + config.initY, time_index * config.tau + config.tau);
+                //for a and b on index n is n+1 index
+                double divisor = C - A * a[y - 1];
+                a[y - 1] = B / divisor;
+                b[y - 1] = (F + A * b[y - 1]) / divisor;
+            }
+            //reverse pass
+            for (int y = config.sizey - 2; y > 1; y--) {
+                //for a and b on index n is n+1 index
+                layer.data[pos][y] = a[y] * data[y + 1][pos] + b[y];
+            }
         }
     }
 }
