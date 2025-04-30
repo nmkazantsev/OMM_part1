@@ -26,12 +26,14 @@ public class Layer {
     public Layer progonka(int type, ModelConfig config) {
         //create new layer
         Layer layer = new Layer(time_index);
+        layer.init(new double[config.sizex][config.sizey]);
         if (type == TYPE_X) {
-            for (int y = 0; y < config.sizey; y++) {
+            //-1 is not to affect borders
+            for (int y = 1; y < config.sizey-1; y++) {
                 progonka_1d(type, y, config, layer);
             }
         } else { //TYPE Y
-            for (int x = 0; x < config.sizex; x++) {
+            for (int x = 1; x < config.sizex-1; x++) {
                 progonka_1d(type, x, config, layer);
             }
         }
