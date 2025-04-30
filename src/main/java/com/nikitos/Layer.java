@@ -43,6 +43,13 @@ public class Layer {
             //search solution like y_{n-1} = an * yn + bn
             //here on index n we keep n+1 index
             double[] a = new double[config.sizex - 1], b = new double[config.sizex - 1];
+            //**************
+            //border conditions is u(x=0)=u(x=pi)=0
+            a[0]=0;
+            a[a.length-1]=0;
+            b[0]=0;
+            b[b.length-1]=0;
+            //*************
             //for each index get coefficients
             double A, B, C, F;
             //todo: border conditions
@@ -54,7 +61,7 @@ public class Layer {
                 F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] +
                         (1 + config.tau / pow(config.hy, 2)) * data[x][pos] +
                         0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1]
-                        + 0.5 * config.tau * f(x * config.sizex + config.hx, pos * config.hy + config.initY, time_index * config.tau + config.tau / 2);
+                        + 0.5 * config.tau * f(x * config.hx + config.initX, pos * config.hy + config.initY, time_index * config.tau + config.tau / 2);
                 //for a and b on index n is n+1 index
                 double divisor = C - A * a[x - 1];
                 a[x - 1] = B / divisor;
