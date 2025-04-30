@@ -26,14 +26,14 @@ public class Layer {
     public Layer progonka(int type, ModelConfig config) {
         //create new layer
         Layer layer = new Layer(time_index);
-        layer.init(new double[config.sizex][config.sizey]);
+        layer.init(new double[config.pointsX][config.pointsY]);
         if (type == TYPE_X) {
             //-1 is not to affect borders
-            for (int y = 1; y < config.sizey-1; y++) {
+            for (int y = 1; y < config.pointsY - 1; y++) {
                 progonka_1d(type, y, config, layer);
             }
         } else { //TYPE Y
-            for (int x = 1; x < config.sizex-1; x++) {
+            for (int x = 1; x < config.pointsX - 1; x++) {
                 progonka_1d(type, x, config, layer);
             }
         }
@@ -43,7 +43,7 @@ public class Layer {
     private void progonka_1d(int type, int pos, ModelConfig config, Layer layer) {
         //search solution like y_{n-1} = an * yn + bn
         //here on index n we keep n+1 index
-        double[] a = new double[config.sizex - 1], b = new double[config.sizex - 1];
+        double[] a = new double[config.pointsX - 1], b = new double[config.pointsX - 1];
         //for each index get coefficients
         double A, B, C, F;
 
@@ -59,7 +59,7 @@ public class Layer {
             C = 1 + config.tau / pow(config.hx, 2);
             //so pos is fixed y-index
             //straight pass
-            for (int x = 1; x < config.sizex - 1; x++) { //do not affect the borders (that is why form 1 to length -1)
+            for (int x = 1; x < config.pointsX - 1; x++) { //do not affect the borders (that is why form 1 to length -1)
                 F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] +
                         (1 + config.tau / pow(config.hy, 2)) * data[x][pos] +
                         0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1]
@@ -70,7 +70,7 @@ public class Layer {
                 b[x - 1] = (F + A * b[x - 1]) / divisor;
             }
             //reverse pass
-            for (int x = config.sizex - 2; x > 1; x--) {
+            for (int x = config.pointsX - 2; x > 1; x--) {
                 //for a and b on index n is n+1 index
                 layer.data[x][pos] = a[x] * data[x + 1][pos] + b[x];
             }
@@ -84,7 +84,7 @@ public class Layer {
             C = 1 + config.tau / pow(config.hy, 2);
             //so pos is fixed y-index
             //straight pass
-            for (int y = 1; y < config.sizey - 1; y++) { //do not affect the borders (that is why form 1 to length -1)
+            for (int y = 1; y < config.pointsY - 1; y++) { //do not affect the borders (that is why form 1 to length -1)
                 F = 0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y] +
                         (1 + config.tau / pow(config.hx, 2)) * data[pos][y] +
                         0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y]
@@ -95,10 +95,14 @@ public class Layer {
                 b[y - 1] = (F + A * b[y - 1]) / divisor;
             }
             //reverse pass
-            for (int y = config.sizey - 2; y > 1; y--) {
+            for (int y = config.pointsY - 2; y > 1; y--) {
                 //for a and b on index n is n+1 index
                 layer.data[pos][y] = a[y] * data[y + 1][pos] + b[y];
             }
         }
+    }
+
+    public double[][] getData() {
+        return data;
     }
 }

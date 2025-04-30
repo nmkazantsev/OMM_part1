@@ -1,14 +1,16 @@
 package com.nikitos;
 
 
+import org.jzy3d.analysis.AnalysisLauncher;
+
 import static java.lang.Math.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ModelConfig config = new ModelConfig();
         config.tau = 0.1;
-        config.sizex = 100;
-        config.sizey = 100;
+        config.pointsX = 100;
+        config.pointsY = 100;
         config.hx = 0.01;
         config.hy = 0.01;
         config.initX = 0;
@@ -21,14 +23,17 @@ public class Main {
             layers[i] = layers[i - 1].progonka(halfStep ? Layer.TYPE_X : Layer.TYPE_Y, config);
             halfStep = !halfStep;
         }
+        Plotter plotter = new Plotter(layers[0], config);
+        AnalysisLauncher.open(plotter);
     }
 
-    //todo: initial conditions
     private static void fillLayer(Layer layer, ModelConfig config) {
-        double[][] array = new double[config.sizex][config.sizey];
-        for (int i = 0; i < config.sizex; i++) {
-            for (int j = 0; j < config.sizey; j++) {
-                array[i][j] = 0;
+        double[][] array = new double[config.pointsX][config.pointsY];
+        for (int i = 0; i < config.pointsX; i++) {
+            for (int j = 0; j < config.pointsY; j++) {
+                double x = i*config.hx+config.initX;
+                double y = j*config.hy+config.initY;
+                array[i][j] =10* sin(2*x)*cos(y);
             }
         }
         layer.init(array);
