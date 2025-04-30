@@ -29,8 +29,8 @@ public class Plotter extends AWTAbstractAnalysis {
     @Override
     public void init() {
         // Define a function to plot
-        Func3D func = new Func3D((x, y) ->  layer.getData()[(int)(x/Math.PI* (modelConfig.pointsX-1))][(int)(y/Math.PI* (modelConfig.pointsY-1))]);
-        Range range = new Range(0,PI);
+        Func3D func = new Func3D((x, y) -> layer.getData()[(int) (x / Math.PI * (modelConfig.pointsX - 1))][(int) (y / Math.PI * (modelConfig.pointsY - 1))]);
+        Range range = new Range(0, PI);
         int steps = max(modelConfig.pointsX, modelConfig.pointsY);
 
         // Create the object to represent the function over the given range.

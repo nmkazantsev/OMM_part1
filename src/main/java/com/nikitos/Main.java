@@ -31,9 +31,9 @@ public class Main {
         double[][] array = new double[config.pointsX][config.pointsY];
         for (int i = 0; i < config.pointsX; i++) {
             for (int j = 0; j < config.pointsY; j++) {
-                double x = i*config.hx+config.initX;
-                double y = j*config.hy+config.initY;
-                array[i][j] =10* sin(2*x)*cos(y);
+                double x = i * config.hx + config.initX;
+                double y = j * config.hy + config.initY;
+                array[i][j] = sin(2 * x) * cos(y);
             }
         }
         layer.init(array);
