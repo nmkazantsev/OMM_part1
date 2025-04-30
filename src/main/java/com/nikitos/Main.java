@@ -14,6 +14,11 @@ public class Main {
         Layer[] layers = new Layer[100];
         layers[0] = new Layer(0);
         fillLayer(layers[0], config);
+        boolean halfStep = true;
+        for (int i = 1; i < layers.length; i++) {
+            layers[i] = layers[i - 1].progonka(halfStep ? Layer.TYPE_X : Layer.TYPE_Y, config);
+            halfStep = !halfStep;
+        }
     }
 
     //todo: initial conditions

@@ -22,7 +22,7 @@ public class Layer {
     /**
      * calculates the whole step from one layer to another.
      */
-    public void progonka(int type, ModelConfig config) {
+    public Layer progonka(int type, ModelConfig config) {
         if (type == TYPE_X) {
             for (int y = 0; y < config.sizey; y++) {
                 progonka_1d(type, y, config);
@@ -41,21 +41,21 @@ public class Layer {
             double[] a = new double[config.sizex - 1], b = new double[config.sizex - 1];
             //for each index get coefficients
             double A, B, C, F;
-            //todo: assign F
             //todo: border conditions
             A = B = 0.5 / pow(config.sizex, 2) * config.tau;
             C = 1 + config.tau / pow(config.hx, 2);
             //so pos is fixed y-index
             //straight pass
             for (int x = 1; x < config.sizex - 1; x++) { //do not affect the borders (that is why form 1 to length -1)
+                F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] + (1 + config.tau / pow(config.hy, 2)) * data[x][pos] + 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1];
                 //for a and b on index n is n+1 index
-                a[x-1] = B/(C-A*a[x-1]);
-                b[x-1] =(F+A*b[x-1])/(C-A*a[x-1]);
+                a[x - 1] = B / (C - A * a[x - 1]);
+                b[x - 1] = (F + A * b[x - 1]) / (C - A * a[x - 1]);
             }
             //reverse pass
-            for(int x= config.sizex-2;x>1;x--){
+            for (int x = config.sizex - 2; x > 1; x--) {
                 //for a and b on index n is n+1 index
-                data[x][pos] = a[x]*data[x+1][pos] + b[x];
+                data[x][pos] = a[x] * data[x + 1][pos] + b[x];
             }
         } else {
             //so pos is fixed x-index
