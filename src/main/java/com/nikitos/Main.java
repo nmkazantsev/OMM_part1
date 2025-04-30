@@ -1,6 +1,8 @@
 package com.nikitos;
 
 
+import static java.lang.Math.*;
+
 public class Main {
     public static void main(String[] args) {
         ModelConfig config = new ModelConfig();
@@ -30,5 +32,9 @@ public class Main {
             }
         }
         layer.init(array);
+    }
+
+    public static double f(double x, double y, double t) {
+        return exp(t) * sin(x) * cos(y);
     }
 }

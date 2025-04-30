@@ -1,6 +1,7 @@
 package com.nikitos;
 
-import static java.lang.Math.pow;
+import static com.nikitos.Main.f;
+import static java.lang.Math.*;
 
 /**
  * Layer is a class of single XY layer. It keeps all the points, able to complete progonka.
@@ -23,18 +24,21 @@ public class Layer {
      * calculates the whole step from one layer to another.
      */
     public Layer progonka(int type, ModelConfig config) {
+        //create new layer
+        Layer layer = new Layer(time_index);
         if (type == TYPE_X) {
             for (int y = 0; y < config.sizey; y++) {
-                progonka_1d(type, y, config);
+                progonka_1d(type, y, config, layer);
             }
         } else { //TYPE Y
             for (int x = 0; x < config.sizex; x++) {
-                progonka_1d(type, x, config);
+                progonka_1d(type, x, config, layer);
             }
         }
+        return layer;
     }
 
-    private void progonka_1d(int type, int pos, ModelConfig config) {
+    private void progonka_1d(int type, int pos, ModelConfig config, Layer layer) {
         if (type == TYPE_X) {
             //search solution like y_{n-1} = an * yn + bn
             //here on index n we keep n+1 index
@@ -47,15 +51,19 @@ public class Layer {
             //so pos is fixed y-index
             //straight pass
             for (int x = 1; x < config.sizex - 1; x++) { //do not affect the borders (that is why form 1 to length -1)
-                F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] + (1 + config.tau / pow(config.hy, 2)) * data[x][pos] + 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1];
+                F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] +
+                        (1 + config.tau / pow(config.hy, 2)) * data[x][pos] +
+                        0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1]
+                        + 0.5 * config.tau * f(x * config.sizex + config.hx, pos * config.hy + config.initY, time_index * config.tau + config.tau / 2);
                 //for a and b on index n is n+1 index
-                a[x - 1] = B / (C - A * a[x - 1]);
-                b[x - 1] = (F + A * b[x - 1]) / (C - A * a[x - 1]);
+                double divisor = C - A * a[x - 1];
+                a[x - 1] = B / divisor;
+                b[x - 1] = (F + A * b[x - 1]) / divisor;
             }
             //reverse pass
             for (int x = config.sizex - 2; x > 1; x--) {
                 //for a and b on index n is n+1 index
-                data[x][pos] = a[x] * data[x + 1][pos] + b[x];
+                layer.data[x][pos] = a[x] * data[x + 1][pos] + b[x];
             }
         } else {
             //so pos is fixed x-index
