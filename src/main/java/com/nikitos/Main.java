@@ -25,6 +25,8 @@ public class Main {
         }
         Plotter plotter = new Plotter(layers[0], config);
         AnalysisLauncher.open(plotter);
+        Plotter plotter2 = new Plotter(layers[1], config);
+        AnalysisLauncher.open(plotter2);
     }
 
     private static void fillLayer(Layer layer, ModelConfig config) {

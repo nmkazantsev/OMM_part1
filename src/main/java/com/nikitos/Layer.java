@@ -62,7 +62,7 @@ public class Layer {
             for (int x = 1; x < config.pointsX - 1; x++) { //do not affect the borders (that is why form 1 to length -1)
                 F = 0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1] +
                         (1 + config.tau / pow(config.hy, 2)) * data[x][pos] +
-                        0.5 * config.tau / pow(config.hy, 2) * data[x][pos - 1]
+                        0.5 * config.tau / pow(config.hy, 2) * data[x][pos + 1]
                         + 0.5 * config.tau * f(x * config.hx + config.initX, pos * config.hy + config.initY, time_index * config.tau + config.tau / 2);
                 //for a and b on index n is n+1 index
                 double divisor = C - A * a[x - 1];
@@ -77,17 +77,20 @@ public class Layer {
         } else {
             //so pos is fixed x-index
             //**************
-            //border conditions is u(x=0)=u(x=pi)=0
+            //border conditions is u'(y=0)=u'(y=pi)=0
             //todo here
+            a[0] = 0;
+            a[a.length - 1] = 0;
             //*************
             A = B = 0.5 / pow(config.hy, 2) * config.tau;
             C = 1 + config.tau / pow(config.hy, 2);
             //so pos is fixed y-index
             //straight pass
             for (int y = 1; y < config.pointsY - 1; y++) { //do not affect the borders (that is why form 1 to length -1)
+                //todo: check if in this step f(t) or f(t+1/2)
                 F = 0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y] +
                         (1 + config.tau / pow(config.hx, 2)) * data[pos][y] +
-                        0.5 * config.tau / pow(config.hx, 2) * data[pos - 1][y]
+                        0.5 * config.tau / pow(config.hx, 2) * data[pos + 1][y]
                         + 0.5 * config.tau * f(pos * config.hx + config.initX, y * config.hy + config.initY, time_index * config.tau + config.tau);
                 //for a and b on index n is n+1 index
                 double divisor = C - A * a[y - 1];
